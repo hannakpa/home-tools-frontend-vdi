@@ -1,0 +1,14 @@
+<div class="flex flex-col 2xl:items-center">
+  <div *ngFor="let menuTree of menuTrees" class="flex flex-col xl:mr-5 xl:ml-5 2xl:w-1/2">
+    <div class="block max-w-screen-2xl p-3 mt-3 bg-orange-300 tall:rounded-t-lg shadow dark:bg-sky-300 dark:border-gray-700">
+      <h5 class="text-2xl tracking-tight text-gray-900 dark:text-white">{{menuTree.category}}</h5>
+    </div>
+    <div
+      class="flex flex-col max-w-screen-2xl pt-2 pl-2 bg-gray-200 tall:rounded-b-lg shadow dark:bg-gray-800">
+      <button *ngFor="let menuItem of menuTree.menuItems" [routerLink]="menuItem.routerUrl" type="button"
+              class="text-black bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+        {{menuItem.name}}
+      </button>
+    </div>
+  </div>
+</div>

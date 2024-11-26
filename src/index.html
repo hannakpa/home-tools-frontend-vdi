@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HomeToolsFrontend</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
+</head>
+<body class="scrollbar-hide bg-cover bg-center lg:block w-screen bg-gray-100 dark:bg-gray-700">
+<app-root></app-root>
+</body>
+</html>

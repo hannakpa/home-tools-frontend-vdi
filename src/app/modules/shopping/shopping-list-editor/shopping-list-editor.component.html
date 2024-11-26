@@ -1,0 +1,173 @@
+<div class="flex flex-col 2xl:items-center">
+  <div *ngIf="showSaveLoadingSpinner" class="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
+  </div>
+
+  <div (click)="toggleCollapse()" class="flex flex-row justify-between max-w-screen-2xl p-3 mt-3 bg-orange-300 tall:rounded-t-lg shadow dark:bg-sky-300 dark:border-gray-700 xl:mr-5 xl:ml-5 2xl:w-1/2">
+    <h5 class="text-2xl tracking-tight text-gray-900 dark:text-white">{{pageTitle}}</h5>
+    <svg class="w-6 text-gray-800 dark:text-white {{isCollapsed ? 'rotate-180' : ''}}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 8">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 5.326 5.7a.909.909 0 0 0 1.348 0L13 1"/>
+    </svg>
+  </div>
+
+  <div
+    [hidden]="showItemAddDialog || isCollapsed"
+    class="flex-col pt-2 pl-2 pr-2 pb-2 bg-gray-200 shadow dark:bg-gray-800 xl:mr-5 xl:ml-5 2xl:w-1/2">
+    <form [formGroup]="shoppingListForm" (ngSubmit)="submitShoppingList()">
+      <div class="mb-6">
+        <label for="name"
+               class="block mb-2 text-sm font-medium {{isShoppingListFormInvalid('name') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
+          Name*
+        </label>
+        <input type="text" id="name"
+               formControlName="name"
+               class="{{isShoppingListFormInvalid('name') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
+               placeholder="Name der Einkaufsliste">
+        <p *ngIf="isShoppingListFormInvalid('name', 'required')"
+           class="mt-2 text-sm text-red-600 dark:text-red-500">
+          Der Artikelname muss ausgefüllt sein
+        </p>
+        <p *ngIf="isShoppingListFormInvalid('name', 'minlength')"
+           class="mt-2 text-sm text-red-600 dark:text-red-500">
+          Der Artikelname muss länger als 3 Zeichen sein
+        </p>
+        <p *ngIf="isShoppingListFormInvalid('name', 'maxlength')"
+           class="mt-2 text-sm text-red-600 dark:text-red-500">
+          Der Artikelname muss kürzer als 20 Zeichen sein
+        </p>
+      </div>
+      <div class="mb-6">
+        <app-date-picker (dateChangeEvent)="changeSelectedDate($event)" [preselectedDatepickerValue]="preSelectedDatepickerValue" labelName="Fälligkeits Datum*"></app-date-picker>
+      </div>
+      <div class="mb-6">
+        <app-multi-select-dropdown [selectedOptions]="preSelectedOptions" [valid]="isShoppingListFormInvalid('entitledUsernames')" (touchEvent)="markMultiSelectAsTouched()" (selectionChangeEvent)="addEntitledUsernames($event)" formArrayName="entitledUsernames" labelName="Zugewiesene Nutzer" [options]="selectableUsers"></app-multi-select-dropdown>
+        <p *ngIf="isShoppingListFormInvalid('entitledUsernames', 'minSelected')"
+           class="text-sm text-red-600 dark:text-red-500">
+          Es muss mindestens ein User ausgewählt werden
+        </p>
+      </div>
+      <button [disabled]="showItemAddDialog || shoppingListForm.invalid" type="submit" (click)="setFinishedFlag(false)"
+              class="disabled:bg-gray-400 disabled:dark:bg-gray-400 text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+        Speichern
+      </button>
+      <button [disabled]="showItemAddDialog || shoppingListForm.invalid" type="submit" (click)="setFinishedFlag(true)"
+              class="disabled:bg-gray-400 disabled:dark:bg-gray-400 text-black w-full bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-900">
+        Speichern und Abschließen
+      </button>
+    </form>
+  </div>
+
+  <button [hidden]="showItemAddDialog" [disabled]="showItemAddDialog" (click)="openAddEntryDialog()" type="button"
+          class="text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-b-lg text-sm px-2 py-2.5 xl:mr-5 xl:ml-5 2xl:w-1/2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+    Eintrag hinzufügen
+  </button>
+
+  <div
+    class="flex-col pt-2 pl-2 pr-2 pb-2 bg-gray-100 tall:rounded-b-lg shadow dark:bg-gray-800 xl:mr-5 xl:ml-5 2xl:w-1/2"
+    [hidden]="!showItemAddDialog || isCollapsed"
+    (keydown.away)="showItemAddDialog = false"
+    [formGroup]="shoppingItemForm"
+  >
+    <div class="mb-6">
+      <label for="articleName"
+             class="block mb-2 text-sm font-medium {{isShoppingItemFormInvalid('articleName') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
+        Artikel Name
+      </label>
+      <input type="text" id="articleName"
+             formControlName="articleName"
+             class="{{isShoppingItemFormInvalid('articleName') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
+             placeholder="Name des Artikels">
+      <p *ngIf="isShoppingItemFormInvalid('articleName', 'required')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Der Name muss ausgefüllt sein
+      </p>
+      <p *ngIf="isShoppingItemFormInvalid('articleName', 'minlength')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Der Name muss länger als 3 Zeichen sein
+      </p>
+      <p *ngIf="isShoppingItemFormInvalid('articleName', 'maxlength')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Der Name muss kürzer als 60 Zeichen sein
+      </p>
+    </div>
+    <div class="mb-6">
+      <label for="quantity"
+             class="block mb-2 text-sm font-medium {{isShoppingItemFormInvalid('quantity') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
+        Menge
+      </label>
+      <input type="text" id="quantity"
+             formControlName="quantity"
+             class="{{isShoppingItemFormInvalid('quantity') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
+             placeholder="Anzahl der Artikel">
+      <p *ngIf="isShoppingItemFormInvalid('quantity', 'required')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Die Menge muss ausgefüllt sein
+      </p>
+      <p *ngIf="isShoppingItemFormInvalid('quantity', 'minlength')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Die Menge muss länger als 3 Zeichen sein
+      </p>
+      <p *ngIf="isShoppingItemFormInvalid('quantity', 'maxlength')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Die Menge muss kürzer als 20 Zeichen sein
+      </p>
+    </div>
+    <div class="mb-6">
+      <label for="comment"
+             class="block mb-2 text-sm font-medium {{isShoppingItemFormInvalid('comment') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
+        Kommentar
+      </label>
+      <input type="text" id="comment"
+             formControlName="comment"
+             class="{{isShoppingItemFormInvalid('comment') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
+             placeholder="Kommentare zum Artikel">
+      <p *ngIf="isShoppingItemFormInvalid('comment', 'maxlength')"
+         class="mt-2 text-sm text-red-600 dark:text-red-500">
+        Der Kommentar muss kürzer als 120 Zeichen sein
+      </p>
+    </div>
+    <button *ngIf="dialogMode === shoppingItemDialogMode.ADD" (click)="addEntryToShoppingList()" type="button"
+            class="disabled:bg-gray-400 disabled:dark:bg-gray-400 text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+            [disabled]="shoppingItemForm.invalid">
+      Hinzufügen
+    </button>
+    <button *ngIf="dialogMode === shoppingItemDialogMode.EDIT" (click)="editEntry()" type="button"
+            class="disabled:bg-gray-400 disabled:dark:bg-gray-400 text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+            [disabled]="shoppingItemForm.invalid">
+      Ändern
+    </button>
+    <button (click)="closeShoppingListEntryAddDialog()" type="button"
+            class="text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800">
+      Schließen
+    </button>
+  </div>
+
+  <div #shoppingItemsScrollContainer class="xl:mr-5 xl:ml-5 2xl:w-1/2" >
+    <div *ngFor="let shoppingItemEntry of shoppingItemEntries.controls; let index = index" class="w-full">
+      <div
+        class="block pt-2 pb-1 px-4 bg-gray-200 rounded-3xl shadow dark:bg-gray-800 dark:border-gray-700 mt-2 mx-2">
+        <div class="flex flex-row justify-between">
+          <h5
+            class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{shoppingItemEntry.get('articleName')?.value}}</h5>
+          <div>
+            <button [disabled]="showItemAddDialog" (click)="removeShoppingItem(index)" type="button"
+                    class="relative bottom-0.5 bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800 ml-2">
+              <img *ngIf="!darkModeService.checkDarkMode()" id="removeShoppingItem_light"
+                   src="assets/img/remove_shopping_list_item_light.svg" class="w-5 h-5" alt="">
+              <img *ngIf="darkModeService.checkDarkMode()" id="removeShoppingItem_dark"
+                   src="assets/img/remove_shopping_list_item_dark.svg" class="w-5 h-5" alt="">
+            </button>
+            <button [disabled]="showItemAddDialog" (click)="openShoppingItemEditDialog(index)" type="button"
+                    class="relative bottom-0.5 bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800 ml-2">
+              <img *ngIf="!darkModeService.checkDarkMode()" id="editShoppingItem_light"
+                   src="assets/img/edit_shopping_list_item_light.svg" class="w-5 h-5" alt="">
+              <img *ngIf="darkModeService.checkDarkMode()" id="editShoppingItem_dark" src="assets/img/edit_shopping_list_item_dark.svg"
+                   class="w-5 h-5" alt="">
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
