@@ -10,3 +10,5 @@ To execute the application run `ng serve` in console.
 # Run the system integration tests
 
 To execute the playwright tests run `npx playwright test`
+
+Note: If there are problems with executing the tests run `npx playwright install` to install the browsers
