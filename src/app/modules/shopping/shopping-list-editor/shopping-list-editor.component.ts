@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {User} from "../../shared/model/User";
 import {FormMode} from "../model/FormMode";
-import {FormArray, FormBuilder, FormControl, Validators} from "@angular/forms";
+import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ArrayValidators} from "../../shared/validators/array.validator";
 import {ShoppingService} from "../service/shopping.service";
 import {ShoppingListEntry} from "../model/ShoppingListEntry";
@@ -221,8 +221,14 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
     this.currentIndexToEdit = index
     this.shoppingItemForm.setValue(this.shoppingItemEntries.at(index).value)
   }
-  showPriceShoppingItem(index: number) {
-   console.log("The price is x. Index:", index)
+
+ showPriceShoppingItem(shoppingItemEntry: AbstractControl) {
+   const group = shoppingItemEntry as FormGroup;
+   const productName = group.get('articleName')?.value
+   console.log("The product is:", productName);
+   //pass the name to the service --> add name to http
+   //substitute tag icon with price
+
   }
 
   openAddEntryDialog() {
@@ -282,4 +288,6 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
   setFinishedFlag(flag: boolean) {
     this.finishedFlag = flag
   }
+
+  protected readonly FormGroup = FormGroup;
 }

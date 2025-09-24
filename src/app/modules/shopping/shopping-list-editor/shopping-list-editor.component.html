@@ -143,7 +143,8 @@
   </div>
 
   <div #shoppingItemsScrollContainer class="xl:mr-5 xl:ml-5 2xl:w-1/2" >
-    <div *ngFor="let shoppingItemEntry of shoppingItemEntries.controls; let index = index" class="w-full">
+    <div *ngFor="let shoppingItemEntry of shoppingItemEntries.controls; let index = index"
+         class="w-full">
       <div
         class="block pt-2 pb-1 px-4 bg-gray-200 rounded-3xl shadow dark:bg-gray-800 dark:border-gray-700 mt-2 mx-2">
         <div class="flex flex-row justify-between">
@@ -164,7 +165,8 @@
               <img *ngIf="darkModeService.checkDarkMode()" id="editShoppingItem_dark" src="assets/img/edit_shopping_list_item_dark.svg"
                    class="w-5 h-5" alt="">
             </button>
-            <button [disabled]="showItemAddDialog" (click)="showPriceShoppingItem(index)" type="button"
+            <button [disabled]="showItemAddDialog" (click)="showPriceShoppingItem(shoppingItemEntry)"
+                    type="button"
                     class="relative bottom-0.5 bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800 ml-2">
               <img *ngIf="!darkModeService.checkDarkMode()" id="showPriceShoppingItem_light"
                    src="assets/img/show_price_list_item_light.svg" class="w-5 h-5" alt="">
