@@ -221,6 +221,9 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
     this.currentIndexToEdit = index
     this.shoppingItemForm.setValue(this.shoppingItemEntries.at(index).value)
   }
+  showPriceShoppingItem(index: number) {
+   console.log("The price is x. Index:", index)
+  }
 
   openAddEntryDialog() {
     this.shoppingItemForm = this.createShoppingItemForm();

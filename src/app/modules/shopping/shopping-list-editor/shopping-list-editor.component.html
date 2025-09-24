@@ -25,15 +25,15 @@
                placeholder="Name der Einkaufsliste">
         <p *ngIf="isShoppingListFormInvalid('name', 'required')"
            class="mt-2 text-sm text-red-600 dark:text-red-500">
-          Der Artikelname muss ausgefüllt sein
+          Der Name muss ausgefüllt sein
         </p>
         <p *ngIf="isShoppingListFormInvalid('name', 'minlength')"
            class="mt-2 text-sm text-red-600 dark:text-red-500">
-          Der Artikelname muss länger als 3 Zeichen sein
+          Der Name muss länger als 3 Zeichen sein
         </p>
         <p *ngIf="isShoppingListFormInvalid('name', 'maxlength')"
            class="mt-2 text-sm text-red-600 dark:text-red-500">
-          Der Artikelname muss kürzer als 20 Zeichen sein
+          Der Name muss kürzer als 20 Zeichen sein
         </p>
       </div>
       <div class="mb-6">
@@ -162,6 +162,14 @@
               <img *ngIf="!darkModeService.checkDarkMode()" id="editShoppingItem_light"
                    src="assets/img/edit_shopping_list_item_light.svg" class="w-5 h-5" alt="">
               <img *ngIf="darkModeService.checkDarkMode()" id="editShoppingItem_dark" src="assets/img/edit_shopping_list_item_dark.svg"
+                   class="w-5 h-5" alt="">
+            </button>
+            <button [disabled]="showItemAddDialog" (click)="showPriceShoppingItem(index)" type="button"
+                    class="relative bottom-0.5 bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800 ml-2">
+              <img *ngIf="!darkModeService.checkDarkMode()" id="showPriceShoppingItem_light"
+                   src="assets/img/show_price_list_item_light.svg" class="w-5 h-5" alt="">
+              <img *ngIf="darkModeService.checkDarkMode()" id="showPriceShoppingItem_dark"
+                   src="assets/img/show_price_list_item_dark.svg"
                    class="w-5 h-5" alt="">
             </button>
           </div>
