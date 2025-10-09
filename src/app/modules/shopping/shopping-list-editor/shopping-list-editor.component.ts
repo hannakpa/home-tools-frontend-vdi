@@ -14,6 +14,7 @@ import {shoppingListUpdated} from "../store/shopping.actions";
 import {Update} from "@ngrx/entity";
 import {filter, of, Subject, Subscription, switchMap, tap} from "rxjs";
 import {Selectable} from "../../shared/model/Selectable";
+import {Product, ProductService} from "../service/product.service";
 
 @Component({
   selector: 'app-shopping-list-editor',
@@ -66,7 +67,8 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private shoppingStore: Store<ShoppingState>,
-    public darkModeService: DarkModeService) {
+    public darkModeService: DarkModeService,
+    private productService: ProductService) {
   }
 
   ngOnInit(): void {
@@ -226,8 +228,22 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
    const group = shoppingItemEntry as FormGroup;
    const productName = group.get('articleName')?.value
    console.log("The product is:", productName);
+
    //pass the name to the service --> add name to http
-   //substitute tag icon with price
+
+   //pass the productName (Apple). add to http://localhost:9090/api/products/search/Apple
+   //getProductByTitle(title: string)
+   this.productService.getProductByTitle(productName).subscribe({
+     next: (product: Product) => {
+       console.log("gettingPrice");
+       console.log(`The price of ${product.title} is: ${product.price}`);
+       alert(`The price of ${product.title} is ${product.price}€`);
+       // sustituir icono por precio
+     },
+     error: (err) => {
+       console.error("Error fetching product:", err);
+     }
+   });
 
   }
 

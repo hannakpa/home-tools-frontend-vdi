@@ -7,6 +7,7 @@ import {NavigationModule} from "./modules/navigation/navigation.module";
 import {StoreModule} from '@ngrx/store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {EffectsModule} from '@ngrx/effects';
+import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 
 export const routes: Routes = [
   {
@@ -31,7 +32,7 @@ export const routes: Routes = [
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() , connectInZone: true}),
     EffectsModule.forRoot([])
   ],
-  providers: [
+  providers: [provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })
