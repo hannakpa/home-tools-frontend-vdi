@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Apple",
+    "price": 0.34,
+    "currency": "€",
+    "category": "Fruit"
+  },
+  {
+    "id": 2,
+    "title": "Eggs",
+    "price": 2.80,
+    "currency": "€",
+    "category": "Dairy"
+  },
+  {
+    "id": 3,
+    "title": "Caviar",
+    "price": 5000,
+    "currency": "€",
+    "category": "Bakery"
+  },
+  {
+    "id": 4,
+    "title": "Bread",
+    "currency": "€",
+    "category": "Bakery"
+  }
+]

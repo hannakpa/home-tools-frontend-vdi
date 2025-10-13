@@ -35,6 +35,10 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
   preSelectedOptions: User[] = []
   preSelectedDatepickerValue?: Date;
   shoppingListId?: number;
+  selectedItemIndex?: number | null = null;
+  displayedPrice?: string | null = null;
+  errorMessage: string | null = null;
+
 
   @ViewChild('shoppingItemsScrollContainer')
   shoppingItemsScrollContainer!: ElementRef;
@@ -224,30 +228,64 @@ export class ShoppingListEditorComponent implements OnInit, OnDestroy {
     this.shoppingItemForm.setValue(this.shoppingItemEntries.at(index).value)
   }
 
- showPriceShoppingItem(shoppingItemEntry: AbstractControl) {
+ showPriceShoppingItem(shoppingItemEntry: AbstractControl, index: number) {
    const group = shoppingItemEntry as FormGroup;
    const productName = group.get('articleName')?.value
-   console.log("The product is:", productName);
+   //if it is getting null..
+   console.log("The product selected is:", productName);
 
    //pass the name to the service --> add name to http
 
    //pass the productName (Apple). add to http://localhost:9090/api/products/search/Apple
    //getProductByTitle(title: string)
+
    this.productService.getProductByTitle(productName).subscribe({
-     next: (product: Product) => {
-       console.log("gettingPrice");
+     next: (product: Product | null) => {
+       console.log("getting price from DB");
+
+       //Product does not exist in DB
+       if (!product || product === null) {
+         console.warn(`Product "${productName}" not found`);
+         this.errorMessage = `The product "${productName}" does not exist.`;
+         this.displayedPrice = "No product found";
+         return;
+       }
+
+       console.log(`Found product in DB:`, product);
+       console.log(`Price:`, product.price);
+
+       // product exists, no price
+       if (product.price === undefined || product.price === null) {
+         console.warn(`Product "${productName}" exists but has no price`);
+         this.errorMessage = "Price not found";
+         return;
+       }
+
+       //product and price exist
        console.log(`The price of ${product.title} is: ${product.price}`);
-       alert(`The price of ${product.title} is ${product.price}€`);
-       // sustituir icono por precio
+
+       //on click, hide the price
+       if (this.selectedItemIndex === index) {
+         this.selectedItemIndex = null;
+         this.displayedPrice = null;
+         return;
+       }
+
+       this.selectedItemIndex = index;
+       this.displayedPrice = `${product.price.toFixed(2)}€`;
      },
+
      error: (err) => {
        console.error("Error fetching product:", err);
+       this.errorMessage = `Failed to fetch "${productName}" from the database.`;
+       this.selectedItemIndex = index;
+       this.displayedPrice = "Error fetching price";
      }
-   });
+   })
+ }
 
-  }
 
-  openAddEntryDialog() {
+   openAddEntryDialog() {
     this.shoppingItemForm = this.createShoppingItemForm();
 
     if (this.isCollapsed) {

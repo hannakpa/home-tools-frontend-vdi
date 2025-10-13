@@ -1,6 +1,8 @@
 
 import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
+import { ShoppingItemPage } from '../pages/shoppingItemPage';
 
+const shoppingItemPage = new ShoppingItemPage();
 
 Given("the user is in the 'Einkaufsliste ändern' page of the list {string}", (name: string) => {
   cy.visit('/shoppingLists/view');
@@ -9,22 +11,50 @@ Given("the user is in the 'Einkaufsliste ändern' page of the list {string}", (n
 )
 
 Given("the product {string} exists", (name: string) => {
-  cy.get('button').contains('Eintrag hinzufügen').click()
-  cy.get('#articleName').type(name)
-  cy.get('#quantity').type("Drei")
-  cy.get('button').contains('Hinzufügen').click()
+  shoppingItemPage.getCreateField().click();
+  shoppingItemPage.getProductNameField().type(name);
+  shoppingItemPage.getProductQuantityField().type("Drei")
+  shoppingItemPage.getAddButton().click()
   }
 )
 
-When("the user clicks on the price icon",() => {
-  cy.get('#showPriceShoppingItem_light, #showPriceShoppingItem_dark').click()
+When("the user checks the product {string} price",(productName: string) => {
+  cy.fixture('products.json').then((products) => {
+    const product = products.find((item: { title: string; }) => item.title === productName);
+
+    if (product.price === undefined) {
+      cy.log(`Product "${productName}" exists but has no price.`);
+    }
+
+      cy.intercept(
+        'GET',
+        `http://localhost:9090/api/products/search/${productName}`,
+        {
+          statusCode: 200,
+          body: product
+        }
+      ).as('getProduct');
+
+//click will always be executed independently from existance of product in the database
+    shoppingItemPage.getPriceIcon().click()
+    cy.wait('@getProduct');
+  });
+
 })
 
-Then("the message {string} will be shown in an alert message",(message: string) => {
-   cy.on('window:alert', (message) => {
-     expect(message).to.equal("The price of Apple is 1.99€")})
+Then("the price {string} appears in the right side of the icon",(price: string) => {
+  shoppingItemPage.getPriceSpan()
+    .should('be.visible',{ timeout: 5000 })
+    .and('contain.text', price);
   }
 )
+
+//NO PRICE AVAILABLE
+Then("the message {string} should appear", (message: string) => {
+  shoppingItemPage.getErrorSpan()
+    .should('be.visible',{ timeout: 5000 })
+    .and("contain.text", message);
+});
 
 //give al alias to the stub.
   //https://stackoverflow.com/questions/51795306/how-can-we-test-the-alert-and-the-text-it-is-displaying-using-cypress-io-js-auto

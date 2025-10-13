@@ -58,6 +58,7 @@
   </div>
 
   <button [hidden]="showItemAddDialog" [disabled]="showItemAddDialog" (click)="openAddEntryDialog()" type="button"
+          data-cy="createField"
           class="text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-b-lg text-sm px-2 py-2.5 xl:mr-5 xl:ml-5 2xl:w-1/2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800">
     Eintrag hinzufügen
   </button>
@@ -73,7 +74,7 @@
              class="block mb-2 text-sm font-medium {{isShoppingItemFormInvalid('articleName') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
         Artikel Name
       </label>
-      <input type="text" id="articleName"
+      <input type="text" id="articleName" data-cy="articleName"
              formControlName="articleName"
              class="{{isShoppingItemFormInvalid('articleName') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
              placeholder="Name des Artikels">
@@ -95,7 +96,7 @@
              class="block mb-2 text-sm font-medium {{isShoppingItemFormInvalid('quantity') ? 'text-red-700 dark:text-red-500' : 'text-gray-900 dark:text-white'}}">
         Menge
       </label>
-      <input type="text" id="quantity"
+      <input type="text" id="quantity" data-cy="quantity"
              formControlName="quantity"
              class="{{isShoppingItemFormInvalid('quantity') ? 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400' : 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'}} border text-sm rounded-lg  block w-full p-2.5 "
              placeholder="Anzahl der Artikel">
@@ -127,6 +128,7 @@
       </p>
     </div>
     <button *ngIf="dialogMode === shoppingItemDialogMode.ADD" (click)="addEntryToShoppingList()" type="button"
+            data-cy="addButton"
             class="disabled:bg-gray-400 disabled:dark:bg-gray-400 text-black w-full bg-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-2 py-2.5 mr-2 mb-2 dark:text-white dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-blue-800"
             [disabled]="shoppingItemForm.invalid">
       Hinzufügen
@@ -165,15 +167,27 @@
               <img *ngIf="darkModeService.checkDarkMode()" id="editShoppingItem_dark" src="assets/img/edit_shopping_list_item_dark.svg"
                    class="w-5 h-5" alt="">
             </button>
-            <button [disabled]="showItemAddDialog" (click)="showPriceShoppingItem(shoppingItemEntry)"
+            <button [disabled]="showItemAddDialog" (click)="showPriceShoppingItem(shoppingItemEntry, index)"
                     type="button"
                     class="relative bottom-0.5 bg-orange-400 hover:bg-orange-500 focus:ring-4 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:bg-blue-400 dark:hover:bg-blue-500 focus:outline-none dark:focus:ring-blue-800 ml-2">
               <img *ngIf="!darkModeService.checkDarkMode()" id="showPriceShoppingItem_light"
+                   data-cy="showPriceShoppingItem_light"
                    src="assets/img/show_price_list_item_light.svg" class="w-5 h-5" alt="">
               <img *ngIf="darkModeService.checkDarkMode()" id="showPriceShoppingItem_dark"
+                   data-cy="showPriceShoppingItem_dark"
                    src="assets/img/show_price_list_item_dark.svg"
                    class="w-5 h-5" alt="">
             </button>
+            <span id="productPrice" data-cy="product-price"
+              *ngIf="selectedItemIndex === index"
+              class="ml-3 px-2 py-1 bg-gray-200 text-black-800 rounded-md text-sm font-semibold shadow">
+              {{ displayedPrice }}
+            </span>
+            <span id="productError" data-cy="product-error"
+              *ngIf="errorMessage"
+              class="ml-3 px-2 py-1 bg-red-200 text-red-800 rounded-md text-sm font-semibold shadow"
+            >{{ errorMessage }}
+</span>
           </div>
         </div>
       </div>
