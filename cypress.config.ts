@@ -4,24 +4,42 @@ import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-prepro
 import { createEsbuildPlugin } from "@badeball/cypress-cucumber-preprocessor/esbuild";
 
 export default defineConfig({
+  ///en  cypress.config.ts, los reportes se generan automáticamente en: /cypress/reports/html
+  reporter: "cypress-mochawesome-reporter",
+  reporterOptions: {
+    reportDir: "cypress/reports",
+    charts: true,
+    reportPageTitle: "My Cypress Test Report",
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    overwrite: false,
+    html: true,
+    json: true,
+    screenshotOnRunFailure: true,
+    saveAllAttempts: true,
+  },
   e2e: {
     baseUrl: "http://localhost:4200",
     specPattern: "**/*.feature",
     async setupNodeEvents(
       on: Cypress.PluginEvents,
       config: Cypress.PluginConfigOptions
-    ): Promise<Cypress.PluginConfigOptions> {
-      // This is required for the preprocessor to be able to generate JSON reports after each run, and more,
+    ):Promise<Cypress.PluginConfigOptions>{
+      //add cucumber plug in
       await addCucumberPreprocessorPlugin(on, config);
-
+      //  Import dinámico compatible con TS
+      //await import("cypress-mochawesome-reporter/plugin").then((plugin) => plugin.default(on));
+      //configurar el preprocesador de ESBuild
       on(
         "file:preprocessor",
         createBundler({
-          plugins: [createEsbuildPlugin(config)],
-        })
+        plugins: [createEsbuildPlugin(config)],
+      })
       );
+    //plugin de mockawesome
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      require("cypress-mochawesome-reporter/plugin")(on);
 
-      // Make sure to return the config object as it might have been modified by the plugin.
       return config;
     },
   },

@@ -1,4 +1,5 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import 'cypress-mochawesome-reporter/cucumberSupport';
 
 When("I visit duckduckgo.com", () => {
   cy.visit("https://www.duckduckgo.com");

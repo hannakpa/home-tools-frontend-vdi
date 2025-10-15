@@ -1,12 +1,14 @@
 
 import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
 import { ShoppingItemPage } from '../pages/shoppingItemPage';
+import 'cypress-mochawesome-reporter/cucumberSupport';
 
 const shoppingItemPage = new ShoppingItemPage();
 
 Given("the user is in the 'Einkaufsliste ändern' page of the list {string}", (name: string) => {
   cy.visit('/shoppingLists/view');
   cy.get('.shopping-entry-row').first().contains(name).click()
+  cy.screenshot()
   }
 )
 
@@ -15,6 +17,7 @@ Given("the product {string} exists", (name: string) => {
   shoppingItemPage.getProductNameField().type(name);
   shoppingItemPage.getProductQuantityField().type("Drei")
   shoppingItemPage.getAddButton().click()
+  cy.screenshot()
   }
 )
 
@@ -38,6 +41,7 @@ When("the user checks the product {string} price",(productName: string) => {
 //click will always be executed independently from existance of product in the database
     shoppingItemPage.getPriceIcon().click()
     cy.wait('@getProduct');
+    cy.screenshot()
   });
 
 })
@@ -46,6 +50,7 @@ Then("the price {string} appears in the right side of the icon",(price: string) 
   shoppingItemPage.getPriceSpan()
     .should('be.visible',{ timeout: 5000 })
     .and('contain.text', price);
+  cy.screenshot()
   }
 )
 
@@ -54,6 +59,7 @@ Then("the message {string} should appear", (message: string) => {
   shoppingItemPage.getErrorSpan()
     .should('be.visible',{ timeout: 5000 })
     .and("contain.text", message);
+  cy.screenshot()
 });
 
 //give al alias to the stub.
