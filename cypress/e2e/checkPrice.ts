@@ -2,6 +2,7 @@
 import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
 import { ShoppingItemPage } from '../pages/shoppingItemPage';
 import 'cypress-mochawesome-reporter/cucumberSupport';
+import '../support/commands';
 
 const shoppingItemPage = new ShoppingItemPage();
 
@@ -21,29 +22,8 @@ Given("the product {string} exists", (name: string) => {
   }
 )
 
-When("the user checks the product {string} price",(productName: string) => {
-  cy.fixture('products.json').then((products) => {
-    const product = products.find((item: { title: string; }) => item.title === productName);
-
-    if (product.price === undefined) {
-      cy.log(`Product "${productName}" exists but has no price.`);
-    }
-
-      cy.intercept(
-        'GET',
-        `http://localhost:9090/api/products/search/${productName}`,
-        {
-          statusCode: 200,
-          body: product
-        }
-      ).as('getProduct');
-
-//click will always be executed independently from existance of product in the database
-    shoppingItemPage.getPriceIcon().click()
-    cy.wait('@getProduct');
-    cy.screenshot()
-  });
-
+When("the user checks the {string} of {string}",(field: string, productName: string) => {
+  cy.mockGetField(productName,"products",field);
 })
 
 Then("the price {string} appears in the right side of the icon",(price: string) => {

@@ -19,6 +19,7 @@ export default defineConfig({
     saveAllAttempts: true,
   },
   e2e: {
+    supportFile: 'cypress/support/e2e.ts',
     baseUrl: "http://localhost:4200",
     specPattern: "**/*.feature",
     async setupNodeEvents(
@@ -38,7 +39,8 @@ export default defineConfig({
       );
     //plugin de mockawesome
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      require("cypress-mochawesome-reporter/plugin")(on);
+      //require("cypress-mochawesome-reporter/plugin")(on);
+      await import("cypress-mochawesome-reporter/plugin").then((plugin) => plugin.default(on));
 
       return config;
     },
