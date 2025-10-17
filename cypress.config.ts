@@ -39,8 +39,7 @@ export default defineConfig({
       );
     //plugin de mockawesome
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      //require("cypress-mochawesome-reporter/plugin")(on);
-      await import("cypress-mochawesome-reporter/plugin").then((plugin) => plugin.default(on));
+      require("cypress-mochawesome-reporter/plugin")(on);
 
       return config;
     },

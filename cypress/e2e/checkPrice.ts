@@ -23,7 +23,7 @@ Given("the product {string} exists", (name: string) => {
 )
 
 When("the user checks the {string} of {string}",(field: string, productName: string) => {
-  cy.mockGetField(productName,"products",field);
+  cy.testMocking(productName,"products",field);
 })
 
 Then("the price {string} appears in the right side of the icon",(price: string) => {

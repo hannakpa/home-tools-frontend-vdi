@@ -2,7 +2,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "types": ["cypress", "@badeball/cypress-cucumber-preprocessor", "node"],
+    "types": ["node"],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
@@ -33,9 +33,5 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  },
-  "include": [
-    "cypress/**/*.ts",
-    "cypress/cypress.d.ts"
-  ]
+  }
 }

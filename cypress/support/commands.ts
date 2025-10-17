@@ -42,7 +42,6 @@ const shoppingItemPage = new ShoppingItemPage();
 
 
 
-// @ts-ignore
 export function activateTrigger(field: string): void{
   switch (field) {
     case "price":
@@ -50,10 +49,8 @@ export function activateTrigger(field: string): void{
       break;
 }}
 
-// @ts-ignore
-Cypress.Commands.add("mockGetField", (productName: string, fixture: string, field: string) => {
+Cypress.Commands.add("testMocking", (productName: string, fixture: string, field: string) => {
   let alias = "";
-  // @ts-ignore
   //cy.mockProduct(productName, "products", field);
   cy.fixture('products.json').then((products) => {
     const product = products.find((item: { title: string; }) => item.title === productName);
